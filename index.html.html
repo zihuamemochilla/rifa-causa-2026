@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rifa con Causa 2026 — Zihuame Mochilla A.C.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lime: #cce70b;
+    --lime-dark: #a8c000;
+    --navy: #053e61;
+    --sky: #46a2da;
+    --cream: #f9f7ef;
+    --cream2: #f0edd8;
+    --dark: #17120f;
+    --gray: #6b6866;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
+
+  /* ── BLOBS DE FONDO (replicando el flyer) ── */
+  .bg-blobs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.13;
+  }
+
+  .blob-1 { width: 420px; height: 420px; background: var(--sky); top: -120px; right: -80px; }
+  .blob-2 { width: 340px; height: 340px; background: var(--lime); bottom: 20%; left: -100px; }
+  .blob-3 { width: 260px; height: 260px; background: var(--sky); top: 50%; right: -60px; opacity: 0.09; }
+
+  /* ── LOGO/NAV ── */
+  .topbar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    padding: 28px 24px 0;
+  }
+
+  .topbar img { height: 64px; }
+
+  .topbar-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .logo-wordmark {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .logo-tagline {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 24px 0;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gray);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-title {
+    font-size: clamp(52px, 12vw, 96px);
+    font-weight: 900;
+    line-height: 0.92;
+    color: var(--dark);
+    letter-spacing: -2px;
+    margin-bottom: 4px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--navy);
+    font-family: 'Libre Baskerville', serif;
+  }
+
+  /* ── PREMIOS CARD ── */
+  .prizes-section {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 36px auto 0;
+    padding: 0 20px;
+  }
+
+  .prizes-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 40px rgba(5,62,97,0.10);
+  }
+
+  /* Premio 1 */
+  .prize-1 {
+    background: var(--lime);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .prize-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dark);
+    opacity: 0.65;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .prize-1-name {
+    font-size: clamp(32px, 8vw, 52px);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--dark);
+    letter-spacing: -1.5px;
+  }
+
+  .prize-emoji {
+    font-size: 52px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+  }
+
+  /* Premios 2 y 3 */
+  .prizes-secondary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .prize-2, .prize-3 {
+    border: 2.5px solid var(--cream2);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .prize-2-name, .prize-3-name {
+    font-size: clamp(15px, 3vw, 18px);
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  .prize-mini-emoji {
+    font-size: 30px;
+    flex-shrink: 0;
+  }
+
+  /* Sorteo info strip */
+  .sorteo-strip {
+    background: var(--cream2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .sorteo-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sorteo-key {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  .sorteo-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+
+  .sorteo-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--cream2);
+    border-left: 1px solid rgba(5,62,97,0.15);
+  }
+
+  /* ── CTA PRINCIPAL ── */
+  .cta-section {
+    padding: 8px 0 4px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .price-label {
+    font-size: 13px;
+    color: var(--gray);
+    font-weight: 500;
+  }
+
+  .price-amount {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--dark);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .price-sub {
+    font-size: 13px;
+    color: var(--gray);
+    font-weight: 400;
+  }
+
+  .multi-note {
+    font-size: 12px;
+    color: var(--gray);
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+  }
+
+  .multi-note span {
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  .btn-buy {
+    display: block;
+    width: 100%;
+    background: var(--navy);
+    color: var(--white);
+    text-decoration: none;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    padding: 20px;
+    border-radius: 14px;
+    transition: background 0.18s, transform 0.12s;
+    cursor: pointer;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .btn-buy:hover {
+    background: #074e7a;
+    transform: translateY(-1px);
+  }
+
+  .btn-buy:active {
+    transform: translateY(0);
+  }
+
+  .btn-sub {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 10px;
+  }
+
+  /* ── DESCRIPCIÓN ZM ── */
+  .about-section {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+  }
+
+  .about-card {
+    background: var(--navy);
+    border-radius: 24px;
+    padding: 32px 28px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .about-card p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.82);
+  }
+
+  .about-card p strong {
+    color: var(--lime);
+  }
+
+  .about-stat {
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .about-stat-num {
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--lime);
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+
+  .about-stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.3;
+    max-width: 80px;
+    margin: 0 auto;
+  }
+
+  /* ── PASOS ── */
+  .steps-section {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+  }
+
+  .steps-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .step {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(5,62,97,0.07);
+  }
+
+  .step-num {
+    width: 36px;
+    height: 36px;
+    background: var(--lime);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--dark);
+    margin: 0 auto 10px;
+  }
+
+  .step-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark);
+    line-height: 1.4;
+  }
+
+  .step-sub {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ── DONATIVO BADGE ── */
+  .donativo-strip {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+  }
+
+  .donativo-badge {
+    background: var(--lime);
+    border-radius: 14px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .donativo-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .donativo-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.4;
+  }
+
+  .donativo-text span {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(23,18,15,0.65);
+    margin-top: 2px;
+  }
+
+  /* ── COUNTDOWN ── */
+  .countdown-section {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+  }
+
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .count-box {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 16px 8px;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(5,62,97,0.07);
+  }
+
+  .count-num {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -2px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .count-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  /* ── FOOTER CTA ── */
+  .footer-cta {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+  }
+
+  .footer-cta .btn-buy {
+    background: var(--lime);
+    color: var(--dark);
+    font-size: 20px;
+  }
+
+  .footer-cta .btn-buy:hover {
+    background: var(--lime-dark);
+    color: var(--dark);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 32px 24px 40px;
+    margin-top: 24px;
+  }
+
+  .footer-logo {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--gray);
+  }
+
+  .footer-links a {
+    color: var(--navy);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 14px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* ── DECORATIVE TICKET LINES ── */
+  .ticket-line {
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--lime) 0px,
+      var(--lime) 12px,
+      transparent 12px,
+      transparent 20px
+    );
+    margin: 28px 0;
+    opacity: 0.6;
+  }
+
+  /* ── RESPONSIVO ── */
+  @media (max-width: 520px) {
+    .prizes-secondary { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .about-card { grid-template-columns: 1fr; }
+    .about-stat { display: none; }
+    .countdown-grid { grid-template-columns: repeat(2, 1fr); }
+    .prize-1-name { font-size: 36px; }
+    .sorteo-divider { display: none; }
+  }
+
+  @media (min-width: 680px) {
+    .hero { padding-top: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-wordmark">Zihuame Mochilla a.c.</div>
+    <div class="logo-tagline">Mujeres con esperanza</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">súmate hoy a nuestra</p>
+  <h1 class="hero-title">rifa con <em>causa</em></h1>
+</div>
+
+<!-- PREMIOS + CTA -->
+<div class="prizes-section">
+  <div class="prizes-card">
+
+    <!-- Premio 1 -->
+    <div class="prize-1">
+      <div>
+        <span class="prize-label">gran premio</span>
+        <div class="prize-1-name">mil<br>dólares</div>
+      </div>
+      <div class="prize-emoji">💵</div>
+    </div>
+
+    <!-- Premios 2 y 3 -->
+    <div class="prizes-secondary">
+      <div class="prize-2">
+        <div class="prize-mini-emoji">📱</div>
+        <div>
+          <span class="prize-label">segundo lugar</span>
+          <div class="prize-2-name">Samsung Galaxy Tab A9+</div>
+        </div>
+      </div>
+      <div class="prize-3">
+        <div class="prize-mini-emoji">🧺</div>
+        <div>
+          <span class="prize-label">tercer lugar</span>
+          <div class="prize-3-name">Canasta de artesanías</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sorteo info -->
+    <div class="sorteo-strip">
+      <div class="sorteo-item">
+        <span class="sorteo-key">fecha</span>
+        <span class="sorteo-val">30 de junio 2026</span>
+      </div>
+      <div class="sorteo-divider"></div>
+      <div class="sorteo-item">
+        <span class="sorteo-key">método del sorteo</span>
+        <span class="sorteo-val">Últimas 3 cifras<br>Lotería Nacional</span>
+      </div>
+      <div class="sorteo-divider"></div>
+      <div class="sorteo-item">
+        <span class="sorteo-key">bono de cooperación</span>
+        <span class="sorteo-val">$250 MXN</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <div class="price-row">
+        <div>
+          <div class="price-label">bono de cooperación</div>
+          <div class="price-sub">puedes comprar más de uno</div>
+        </div>
+        <div>
+          <div class="price-amount">$250</div>
+          <div class="price-sub" style="text-align:right;">MXN por boleto</div>
+        </div>
+      </div>
+
+      <div class="multi-note">
+        💡 <span>Puedes ajustar la cantidad de boletos</span> directamente en la página de pago.
+      </div>
+
+      <a href="https://donate.stripe.com/eVqaEXeWq6Hp8UVa596g80k" target="_blank" class="btn-buy">
+        Comprar mi boleto →
+      </a>
+      <p class="btn-sub">Pago seguro vía Stripe · Este boleto es un donativo</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- DONATIVO BADGE -->
+<div class="donativo-strip">
+  <div class="donativo-badge">
+    <div class="donativo-icon">🎟️</div>
+    <div class="donativo-text">
+      Este boleto es un donativo.
+      <span>Cada compra apoya directamente los programas de educación, salud y empoderamiento económico de las comunidades indígenas en Monterrey.</span>
+    </div>
+  </div>
+</div>
+
+<!-- CUENTA REGRESIVA -->
+<div class="countdown-section">
+  <div class="countdown-grid">
+    <div class="count-box">
+      <div class="count-num" id="cd-days">--</div>
+      <div class="count-label">días</div>
+    </div>
+    <div class="count-box">
+      <div class="count-num" id="cd-hours">--</div>
+      <div class="count-label">horas</div>
+    </div>
+    <div class="count-box">
+      <div class="count-num" id="cd-mins">--</div>
+      <div class="count-label">minutos</div>
+    </div>
+    <div class="count-box">
+      <div class="count-num" id="cd-secs">--</div>
+      <div class="count-label">segundos</div>
+    </div>
+  </div>
+</div>
+
+<!-- CÓMO COMPRAR -->
+<div class="steps-section">
+  <div class="ticket-line"></div>
+  <h2 class="steps-title">¿Cómo compro mi boleto?</h2>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">Haz clic en "Comprar mi boleto"</div>
+      <div class="step-sub">Te llevamos directo a la página de pago seguro</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">Elige cuántos boletos quieres</div>
+      <div class="step-sub">Ajusta la cantidad en la página de Stripe</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Completa el pago y listo</div>
+      <div class="step-sub">Recibes confirmación inmediata con tu folio</div>
+    </div>
+  </div>
+</div>
+
+<!-- SOBRE ZM -->
+<div class="about-section">
+  <div class="ticket-line"></div>
+  <div class="about-card">
+    <div>
+      <p>
+        <strong>Somos la organización de las comunidades indígenas en Monterrey.</strong><br><br>
+        Acompañamos a familias nahuas y otomíes que viven en nuestra ciudad — con programas reales de salud, educación y trabajo. No desde lejos: desde adentro, con nombres y apellidos.<br><br>
+        Tu boleto financia eso directamente. Sin intermediarios, sin letra chica.
+      </p>
+    </div>
+    <div class="about-stat">
+      <div class="about-stat-num">20+</div>
+      <div class="about-stat-label">años en Monterrey</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEGUNDO CTA -->
+<div class="footer-cta">
+  <div class="ticket-line"></div>
+  <a href="https://donate.stripe.com/eVqaEXeWq6Hp8UVa596g80k" target="_blank" class="btn-buy" style="background:var(--lime);color:var(--dark);">
+    Comprar mi boleto — $250 MXN →
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Zihuame Mochilla A.C.</div>
+  <div class="footer-links">
+    <a href="https://zihuame.org.mx" target="_blank">zihuame.org.mx</a>
+    <span>·</span>
+    <a href="mailto:zihuame.proyectos@gmail.com">zihuame.proyectos@gmail.com</a>
+    <span>·</span>
+    <a href="tel:8183444300">81 8344 4300</a>
+  </div>
+  <p class="footer-note">
+    Sorteo sujeto a las tres últimas cifras del Sorteo Mayor de la Lotería Nacional del 30 de junio de 2026. Este boleto es un donativo a Zihuame Mochilla A.C. No deducible de impuestos como gasto personal.
+  </p>
+</footer>
+
+<script>
+  // Cuenta regresiva al 30 de junio de 2026
+  const target = new Date('2026-06-30T23:59:00-06:00').getTime();
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function updateCountdown() {
+    const now = Date.now();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '00';
+      document.getElementById('cd-hours').textContent = '00';
+      document.getElementById('cd-mins').textContent = '00';
+      document.getElementById('cd-secs').textContent = '00';
+      return;
+    }
+
+    const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('cd-days').textContent  = pad(days);
+    document.getElementById('cd-hours').textContent = pad(hours);
+    document.getElementById('cd-mins').textContent  = pad(mins);
+    document.getElementById('cd-secs').textContent  = pad(secs);
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>
